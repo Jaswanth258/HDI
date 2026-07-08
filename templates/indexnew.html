@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict HDI</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">HDI Predictor</a>
+            <a href="/" class="btn btn-light">Home</a>
+        </div>
+    </nav>
+    <div class="container py-4">
+        <h2 class="text-center mb-4">Predict HDI Score</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <form method="POST" action="/predict">
+                            <div class="mb-3">
+                                <label class="form-label">Country</label>
+                                <select class="form-select" name="country" required>
+                                    <option value="">-- Select Country --</option>
+                                    {% for c in countries %}
+                                    <option value="{{ c }}" {% if form_data and form_data.country == c %}selected{% endif %}>{{ c }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Life Expectancy (years) <span class="text-muted">(50–85)</span></label>
+                                <input type="number" step="0.01" min="50" max="85" class="form-control" name="life_expectancy"
+                                       value="{{ form_data.life_expectancy if form_data else '' }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Expected Years of Schooling <span class="text-muted">(5–20)</span></label>
+                                <input type="number" step="0.1" min="5" max="20" class="form-control" name="expected_years_schooling"
+                                       value="{{ form_data.expected_years_schooling if form_data else '' }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Mean Years of Schooling <span class="text-muted">(3–15)</span></label>
+                                <input type="number" step="0.1" min="3" max="15" class="form-control" name="mean_years_schooling"
+                                       value="{{ form_data.mean_years_schooling if form_data else '' }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">GNI per Capita (PPP $) <span class="text-muted">(500–75000)</span></label>
+                                <input type="number" step="0.01" min="500" max="75000" class="form-control" name="gni_per_capita"
+                                       value="{{ form_data.gni_per_capita if form_data else '' }}" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Predict HDI</button>
+                        </form>
+                        {% if prediction is not none %}
+                        <div class="alert alert-success mt-4 text-center">
+                            <h5>Predicted HDI Score</h5>
+                            <p class="display-6 mb-0">{{ prediction }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
