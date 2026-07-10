@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HDI Prediction System — Human Development Index</title>
+    <meta name="description" content="Predict Human Development Index scores using machine learning. Analyze life expectancy, education, and income indicators to classify countries into development tiers.">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="bg-animated"></div>
+
+    <nav class="navbar">
+        <a class="navbar-brand" href="/">
+            <span class="logo-icon">📊</span>
+            <span>HDI Predictor</span>
+        </a>
+        <div class="navbar-links">
+            <a href="/" class="nav-link active">Home</a>
+            <a href="/predict" class="nav-link">Predict</a>
+        </div>
+    </nav>
+
+    <div class="page-container">
+        <section class="hero">
+            <div class="hero-badge">🌍 Machine Learning Powered</div>
+            <h1>
+                Human Development<br>
+                <span class="gradient-text">Index Predictor</span>
+            </h1>
+            <p class="subtitle">
+                Analyze life expectancy, education, and income indicators to predict HDI scores
+                and classify nations into Very High, High, Medium, or Low development tiers.
+            </p>
+            <a href="/predict" class="hero-cta">
+                Make a Prediction
+                <span class="arrow">→</span>
+            </a>
+        </section>
+
+        <section class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon health">❤️</div>
+                <h3>Long & Healthy Life</h3>
+                <p>
+                    Measured by life expectancy at birth, reflecting a population's access to
+                    healthcare, nutrition, and overall living conditions that contribute to longevity.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon education">📚</div>
+                <h3>Knowledge & Education</h3>
+                <p>
+                    Assessed through expected years of schooling for children and mean years of
+                    schooling for adults, capturing both opportunity and achievement in education.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon income">💰</div>
+                <h3>Standard of Living</h3>
+                <p>
+                    Measured by Gross National Income (GNI) per capita at purchasing power parity (PPP),
+                    reflecting the economic resources available to citizens.
+                </p>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <p>HDI Prediction System — Built with Flask, Scikit-learn, and Machine Learning</p>
+        </footer>
+    </div>
+</body>
+</html>

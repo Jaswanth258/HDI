@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict HDI Score — HDI Prediction System</title>
+    <meta name="description" content="Enter country indicators to predict the Human Development Index score and get development tier classification with actionable insights.">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="bg-animated"></div>
+
+    <nav class="navbar">
+        <a class="navbar-brand" href="/">
+            <span class="logo-icon">📊</span>
+            <span>HDI Predictor</span>
+        </a>
+        <div class="navbar-links">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/predict" class="nav-link active">Predict</a>
+        </div>
+    </nav>
+
+    <div class="page-container">
+        <section class="predict-section">
+            <div class="predict-header">
+                <h2>Predict HDI Score</h2>
+                <p>Enter development indicators to get the predicted HDI score and tier classification</p>
+            </div>
+
+            <div class="form-card">
+                <form method="POST" action="/predict" id="predict-form">
+                    <div class="form-group">
+                        <label for="country">Country</label>
+                        <select id="country" name="country" required>
+                            <option value="">— Select Country —</option>
+                            {% for c in countries %}
+                            <option value="{{ c }}" {% if form_data and form_data.country == c %}selected{% endif %}>{{ c }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="life_expectancy">
+                                Life Expectancy
+                                <span class="range-hint">(50–85 yrs)</span>
+                            </label>
+                            <input type="number" step="0.01" min="50" max="85" id="life_expectancy"
+                                   name="life_expectancy" placeholder="e.g. 72.5"
+                                   value="{{ form_data.life_expectancy if form_data else '' }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="gni_per_capita">
+                                GNI per Capita
+                                <span class="range-hint">(PPP $500–75000)</span>
+                            </label>
+                            <input type="number" step="0.01" min="500" max="75000" id="gni_per_capita"
+                                   name="gni_per_capita" placeholder="e.g. 42000"
+                                   value="{{ form_data.gni_per_capita if form_data else '' }}" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="expected_years_schooling">
+                                Expected Yrs of Schooling
+                                <span class="range-hint">(5–20)</span>
+                            </label>
+                            <input type="number" step="0.1" min="5" max="20" id="expected_years_schooling"
+                                   name="expected_years_schooling" placeholder="e.g. 14.5"
+                                   value="{{ form_data.expected_years_schooling if form_data else '' }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="mean_years_schooling">
+                                Mean Yrs of Schooling
+                                <span class="range-hint">(3–15)</span>
+                            </label>
+                            <input type="number" step="0.1" min="3" max="15" id="mean_years_schooling"
+                                   name="mean_years_schooling" placeholder="e.g. 10.2"
+                                   value="{{ form_data.mean_years_schooling if form_data else '' }}" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-predict" id="btn-predict">
+                        🔮 Predict HDI Score
+                    </button>
+                </form>
+            </div>
+
+            {% if prediction is not none %}
+            {% set tier_class = tier|lower|replace(' ', '-') %}
+            <div class="result-card tier-{{ tier_class }}" id="result-card">
+                <p class="result-label">Predicted HDI Score</p>
+                <p class="result-score" style="color: {{ tier_color }};" id="score-display">{{ prediction }}</p>
+
+                <span class="tier-badge {{ tier_class }}">
+                    {% if tier == 'Very High' %}🟢
+                    {% elif tier == 'High' %}🔵
+                    {% elif tier == 'Medium' %}🟠
+                    {% else %}🔴
+                    {% endif %}
+                    {{ tier }} Human Development
+                </span>
+
+                <!-- HDI Gauge -->
+                <div class="gauge-container">
+                    <div class="gauge-bar">
+                        <div class="gauge-marker" style="left: {{ (prediction * 100) | round(1) }}%;"></div>
+                    </div>
+                    <div class="gauge-labels">
+                        <span>0.0 Low</span>
+                        <span>0.55 Medium</span>
+                        <span>0.70 High</span>
+                        <span>0.80 Very High</span>
+                        <span>1.0</span>
+                    </div>
+                </div>
+
+                <!-- Insights -->
+                <div class="insights-section">
+                    <p class="insights-title">
+                        💡 {{ insights.title }}
+                    </p>
+                    <p class="insights-description">
+                        {{ insights.description }}
+                    </p>
+                    <ul class="recommendations-list">
+                        {% for rec in insights.recommendations %}
+                        <li>
+                            <span class="check-icon" style="color: {{ tier_color }};">✦</span>
+                            {{ rec }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+        </section>
+
+        <footer class="footer">
+            <p>HDI Prediction System — Built with Flask, Scikit-learn, and Machine Learning</p>
+        </footer>
+    </div>
+
+    <script>
+        // Smooth scroll to result after prediction
+        document.addEventListener('DOMContentLoaded', function() {
+            const result = document.getElementById('result-card');
+            if (result) {
+                setTimeout(() => {
+                    result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+            }
+        });
+    </script>
+</body>
+</html>
