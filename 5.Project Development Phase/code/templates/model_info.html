@@ -188,71 +188,101 @@
             border-radius: 3px;
         }
 
-        .plots-section {
+        /* Large Plots Section Styles */
+        .large-plots-container {
+            margin-top: 40px;
+        }
+        .large-plots-title {
+            color: var(--accent-blue);
+            font-size: 1.6rem;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(248, 250, 252, 0.15);
+            padding-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .large-plot-card {
             background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border: 1px solid var(--card-border);
             border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 30px;
+            padding: 30px;
+            margin-bottom: 40px;
+            display: flex;
+            gap: 35px;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
         }
-        .plots-section h3 {
+        .large-plot-card:hover {
+            border-color: rgba(59, 130, 246, 0.2);
+            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.1);
+        }
+        .large-plot-card:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+        @media (max-width: 992px) {
+            .large-plot-card, .large-plot-card:nth-child(even) {
+                flex-direction: column;
+                padding: 20px;
+            }
+        }
+        .large-plot-image-wrapper {
+            flex: 1.1;
+            background: #ffffff;
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            width: 100%;
+        }
+        .large-plot-img {
+            width: 100%;
+            height: auto;
+            max-width: 580px;
+            border-radius: 4px;
+            display: block;
+        }
+        .large-plot-details {
+            flex: 0.9;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        .large-plot-details h4 {
             color: var(--accent-blue);
-            margin-bottom: 20px;
-            font-size: 1.3rem;
-            border-bottom: 1px solid rgba(248, 250, 252, 0.1);
-            padding-bottom: 10px;
+            font-size: 1.4rem;
+            font-weight: 650;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        .plots-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
+        .large-plot-details p {
+            color: #cbd5e1;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
         }
-        .plot-item {
-            background: rgba(15, 23, 42, 0.4);
-            border: 1px solid rgba(248, 250, 252, 0.05);
-            border-radius: 12px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
+        .large-plot-details ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
         }
-        .plot-item:hover {
-            transform: translateY(-2px);
-            border-color: rgba(59, 130, 246, 0.2);
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.1);
-        }
-        .plot-image-wrapper {
-            width: 100%;
-            overflow: hidden;
-            border-radius: 8px;
-            background: #fff;
-            padding: 5px;
-        }
-        .plot-img {
-            width: 100%;
-            height: auto;
-            display: block;
-            transition: transform 0.5s ease;
-        }
-        .plot-img:hover {
-            transform: scale(1.03);
-        }
-        .plot-desc {
-            margin-top: 15px;
+        .large-plot-details li {
             color: #94a3b8;
-            font-size: 0.85rem;
-            line-height: 1.4;
-            text-align: left;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 8px;
+            list-style-type: square;
         }
-        .plot-desc strong {
-            color: var(--text-main);
-            display: block;
-            margin-bottom: 4px;
+        .highlight-accent {
+            color: #38bdf8;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -391,41 +421,67 @@ HDI = 0.1453 + 0.0128*(EYS) + 0.0107*(MYS) + 0.0057*(Life_Exp) + 1.9e-6*(GNI) + 
                 </div>
             </div>
 
-            <!-- Visualization Plots Grid -->
-            <div class="plots-section">
-                <h3>📈 Exploratory Data Analysis & Visualizations</h3>
-                <div class="plots-grid">
-                    <!-- Plot 1 -->
-                    <div class="plot-item">
-                        <div class="plot-image-wrapper">
-                            <img class="plot-img" src="/static/images/correlation_heatmap.png" alt="Correlation Heatmap">
-                        </div>
-                        <div class="plot-desc">
-                            <strong>Feature Correlation Matrix</strong>
-                            Correlation heatmap using Seaborn, revealing that education variables have the highest linear correlations with the target HDI Index.
-                        </div>
+            <!-- Large Detailed Plots Container -->
+            <div class="large-plots-container">
+                <h3 class="large-plots-title">📈 Exploratory Data Analysis & Visualizations</h3>
+                
+                <!-- Plot Card 1: Heatmap -->
+                <div class="large-plot-card">
+                    <div class="large-plot-image-wrapper">
+                        <img class="large-plot-img" src="/static/images/correlation_heatmap.png" alt="Correlation Heatmap">
                     </div>
-                    <!-- Plot 2 -->
-                    <div class="plot-item">
-                        <div class="plot-image-wrapper">
-                            <img class="plot-img" src="/static/images/strip_mean_schooling_vs_hdi.png" alt="Schooling vs HDI Plot">
-                        </div>
-                        <div class="plot-desc">
-                            <strong>Schooling vs HDI Strip Plot</strong>
-                            Strip plot generated during exploratory data analysis (EDA), showing the relationship between mean years of adult schooling and target index scores.
-                        </div>
-                    </div>
-                    <!-- Plot 3 -->
-                    <div class="plot-item">
-                        <div class="plot-image-wrapper">
-                            <img class="plot-img" src="/static/images/strip_life_expectancy_vs_hdi.png" alt="Life Expectancy vs HDI Plot">
-                        </div>
-                        <div class="plot-desc">
-                            <strong>Life Expectancy vs HDI Strip Plot</strong>
-                            Strip plot mapping the distribution of the life expectancy indicator relative to country index groups for the dataset.
-                        </div>
+                    <div class="large-plot-details">
+                        <h4>🔍 Feature Correlation Heatmap</h4>
+                        <p>
+                            This correlation matrix maps the statistical relationship between all numeric indicators in the training dataset and the target HDI Index. The scores represent Pearson correlation coefficients ranging from <span class="highlight-accent">-1.0</span> (perfect negative) to <span class="highlight-accent">+1.0</span> (perfect positive).
+                        </p>
+                        <p><strong>Key Observations for Video Demo:</strong></p>
+                        <ul>
+                            <li><strong>Education Dominance</strong>: Expected Years of Schooling (<span class="highlight-accent">0.94</span>) and Mean Years of Schooling (<span class="highlight-accent">0.90</span>) show the highest positive correlations, explaining why the model assigns them the highest coefficients.</li>
+                            <li><strong>Strong Health Indicator</strong>: Life Expectancy displays a strong positive correlation of <span class="highlight-accent">0.81</span>.</li>
+                            <li><strong>Income Diminishing Returns</strong>: GNI per capita has a lower direct linear correlation (<span class="highlight-accent">0.59</span>) due to the exponential nature of GDP distribution, which validates the UNDP's methodology of applying logarithmic scaling to economic variables.</li>
+                        </ul>
                     </div>
                 </div>
+
+                <!-- Plot Card 2: Mean Schooling Strip Plot -->
+                <div class="large-plot-card">
+                    <div class="large-plot-image-wrapper">
+                        <img class="large-plot-img" src="/static/images/strip_mean_schooling_vs_hdi.png" alt="Mean Schooling vs HDI Strip Plot">
+                    </div>
+                    <div class="large-plot-details">
+                        <h4>📚 Mean Schooling vs HDI Distribution</h4>
+                        <p>
+                            This strip plot visualizes the distribution of the target HDI Index relative to the Mean Years of Schooling indicator across the training dataset profiles.
+                        </p>
+                        <p><strong>Key Observations for Video Demo:</strong></p>
+                        <ul>
+                            <li><strong>Clear Upward Shift</strong>: As adult schooling duration increases, the predicted/actual index score shifts steadily upward.</li>
+                            <li><strong>High Education Groupings</strong>: Countries with mean schooling years above <span class="highlight-accent">10.0</span> years consistently score above the <span class="highlight-accent">0.800</span> threshold, mapping directly into the Very High human development tier.</li>
+                            <li><strong>Developing Gaps</strong>: Lower schooling brackets (<span class="highlight-accent">under 6 years</span>) are concentrated below the <span class="highlight-accent">0.600</span> index range, indicating a clear developmental bottleneck.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Plot Card 3: Life Expectancy Strip Plot -->
+                <div class="large-plot-card">
+                    <div class="large-plot-image-wrapper">
+                        <img class="large-plot-img" src="/static/images/strip_life_expectancy_vs_hdi.png" alt="Life Expectancy vs HDI Strip Plot">
+                    </div>
+                    <div class="large-plot-details">
+                        <h4>❤️ Life Expectancy vs HDI Distribution</h4>
+                        <p>
+                            This strip plot visualizes the distribution of index rankings relative to national life expectancy indicators at birth.
+                        </p>
+                        <p><strong>Key Observations for Video Demo:</strong></p>
+                        <ul>
+                            <li><strong>Health Foundation</strong>: Represents the demographic core of development. Higher life expectancy reflects robust national healthcare, sanitization, and nutritional standards.</li>
+                            <li><strong>Developed Clustering</strong>: Developed profiles cluster closely together above the <span class="highlight-accent">75 years</span> life expectancy range.</li>
+                            <li><strong>Urgent Intervention Zones</strong>: Developing countries under <span class="highlight-accent">60 years</span> life expectancy are clustered at the bottom left, highlighting target areas that require direct medical interventions.</li>
+                        </ul>
+                    </div>
+                </div>
+
             </div>
         </div>
 
