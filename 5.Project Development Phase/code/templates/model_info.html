@@ -3,22 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Model Info — HDI Prediction System</title>
+    <title>Model Info & Analytics — HDI Prediction System</title>
     <meta name="description" content="View machine learning model parameters, performance metrics, feature importances, and exploratory data visualizations for the HDI Prediction engine.">
     <link rel="stylesheet" href="/static/style.css">
     <style>
-        .model-info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-top: 30px;
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(248, 250, 252, 0.1);
         }
-        @media (max-width: 900px) {
-            .model-info-grid {
+        .status-badge {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            animation: pulse-dot 1.5s infinite;
+        }
+        @keyframes pulse-dot {
+            0% { transform: scale(0.9); opacity: 0.6; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.6; }
+        }
+
+        .metrics-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .metric-kpi-card {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(248, 250, 252, 0.08);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+        .metric-kpi-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 6px 24px rgba(59, 130, 246, 0.15);
+        }
+        .kpi-icon {
+            font-size: 2rem;
+            background: rgba(59, 130, 246, 0.1);
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        .kpi-details {
+            display: flex;
+            flex-direction: column;
+        }
+        .kpi-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.2;
+        }
+        .kpi-label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+
+        .model-analytics-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        @media (max-width: 1024px) {
+            .model-analytics-grid {
                 grid-template-columns: 1fr;
             }
         }
-        .info-card {
+        .analytics-card {
             background: var(--card-bg);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
@@ -27,100 +111,148 @@
             padding: 24px;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
-        .info-card h3 {
+        .analytics-card h3 {
             color: var(--accent-blue);
             margin-bottom: 20px;
-            font-size: 1.4rem;
-            border-bottom: 2px solid rgba(59, 130, 246, 0.2);
+            font-size: 1.3rem;
+            border-bottom: 1px solid rgba(248, 250, 252, 0.1);
             padding-bottom: 10px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
-        .metrics-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-        .metrics-table th, .metrics-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid rgba(248, 250, 252, 0.1);
-        }
-        .metrics-table th {
-            color: #94a3b8;
-            font-weight: 600;
-        }
-        .metrics-table td {
-            color: var(--text-main);
-        }
-        .metric-value {
-            font-family: 'Consolas', monospace;
-            font-weight: bold;
-            color: #10b981;
-        }
-        .coeff-bar-container {
-            margin-top: 15px;
-        }
-        .coeff-row {
-            margin-bottom: 15px;
-        }
-        .coeff-labels {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-            color: #94a3b8;
-        }
-        .coeff-bar {
-            height: 8px;
-            background: rgba(248, 250, 252, 0.1);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        .coeff-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent-blue), #10b981);
-            border-radius: 4px;
-        }
-        .visualization-gallery {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .viz-container {
-            background: rgba(15, 23, 42, 0.4);
-            border-radius: 12px;
-            padding: 15px;
-            border: 1px solid rgba(248, 250, 252, 0.05);
-            text-align: center;
-        }
-        .viz-container p {
-            color: #94a3b8;
-            font-size: 0.9rem;
-            margin-top: 10px;
-        }
-        .viz-image {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            transition: transform 0.3s ease;
-        }
-        .viz-image:hover {
-            transform: scale(1.02);
-        }
+
         .formula-box {
             font-family: 'Consolas', monospace;
             background: rgba(15, 23, 42, 0.6);
-            border-radius: 8px;
-            padding: 15px;
+            border-radius: 10px;
+            padding: 18px;
             color: #38bdf8;
             border: 1px solid rgba(56, 189, 248, 0.2);
             overflow-x: auto;
             margin: 15px 0;
-            line-height: 1.5;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+        }
+        .formula-legend {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-top: 10px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 8px;
+            background: rgba(248, 250, 252, 0.03);
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .coeff-table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        .coeff-table th {
+            text-align: left;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            padding: 10px;
+            border-bottom: 1px solid rgba(248, 250, 252, 0.1);
+        }
+        .coeff-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid rgba(248, 250, 252, 0.05);
+            vertical-align: middle;
+        }
+        .coeff-name {
+            font-weight: 500;
+            color: var(--text-main);
+        }
+        .coeff-val-num {
+            font-family: 'Consolas', monospace;
+            font-weight: 600;
+            color: #10b981;
+        }
+        .coeff-bar-wrapper {
+            width: 120px;
+        }
+        .coeff-progress-bar {
+            height: 6px;
+            background: rgba(248, 250, 252, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .coeff-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-blue), #10b981);
+            border-radius: 3px;
+        }
+
+        .plots-section {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+        .plots-section h3 {
+            color: var(--accent-blue);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            border-bottom: 1px solid rgba(248, 250, 252, 0.1);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .plots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        .plot-item {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(248, 250, 252, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        .plot-item:hover {
+            transform: translateY(-2px);
+            border-color: rgba(59, 130, 246, 0.2);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.1);
+        }
+        .plot-image-wrapper {
+            width: 100%;
+            overflow: hidden;
+            border-radius: 8px;
+            background: #fff;
+            padding: 5px;
+        }
+        .plot-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+        .plot-img:hover {
+            transform: scale(1.03);
+        }
+        .plot-desc {
+            margin-top: 15px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            text-align: left;
+        }
+        .plot-desc strong {
+            color: var(--text-main);
+            display: block;
+            margin-bottom: 4px;
         }
     </style>
 </head>
@@ -140,122 +272,162 @@
     </nav>
 
     <div class="page-container">
-        <section class="predict-section">
-            <div class="predict-header">
-                <h2>Model Information & Analytics</h2>
-                <p>Explore the algorithm performance metrics, feature importances, and exploratory data plots</p>
+        <div class="predict-section" style="padding: 0; background: none; border: none; box-shadow: none; backdrop-filter: none;">
+            <div class="dashboard-header">
+                <div>
+                    <h2 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 5px;">Model Information & Analytics</h2>
+                    <p style="color: #94a3b8; font-size: 0.95rem;">Algorithm performance metrics, mathematical layout, and exploratory plots</p>
+                </div>
+                <div class="status-badge">
+                    <div class="status-dot"></div>
+                    <span>Model: Active & Serialized</span>
+                </div>
             </div>
 
-            <div class="model-info-grid">
-                <!-- Left Column -->
-                <div class="info-card">
-                    <h3>⚙️ Model Overview</h3>
-                    <p>
-                        The HDI Prediction engine uses a **Linear Regression** model. The algorithm learns the optimal weights (coefficients) for each indicator to establish the linear mapping to the HDI index target.
-                    </p>
-                    
-                    <div class="formula-box">
-HDI = 0.1453 + 0.0128*(EYS) + 0.0107*(MYS) + 0.0057*(Life_Exp) + 0.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005*(GNI)</div>
+            <!-- KPI Row -->
+            <div class="metrics-summary-grid">
+                <div class="metric-kpi-card">
+                    <div class="kpi-icon" style="color: #3b82f6;">🧠</div>
+                    <div class="kpi-details">
+                        <span class="kpi-value">Linear Regression</span>
+                        <span class="kpi-label">Algorithm used</span>
+                    </div>
+                </div>
+                <div class="metric-kpi-card">
+                    <div class="kpi-icon" style="color: #10b981;">🎯</div>
+                    <div class="kpi-details">
+                        <span class="kpi-value">0.8834</span>
+                        <span class="kpi-label">R² Accuracy Score</span>
+                    </div>
+                </div>
+                <div class="metric-kpi-card">
+                    <div class="kpi-icon" style="color: #ef4444;">📉</div>
+                    <div class="kpi-details">
+                        <span class="kpi-value">0.0361</span>
+                        <span class="kpi-label">Root Mean Sq. Error</span>
+                    </div>
+                </div>
+                <div class="metric-kpi-card">
+                    <div class="kpi-icon" style="color: #a855f7;">📋</div>
+                    <div class="kpi-details">
+                        <span class="kpi-value">160 / 40</span>
+                        <span class="kpi-label">Train / Test Split</span>
+                    </div>
+                </div>
+            </div>
 
-                    <h3>📊 Model Performance Metrics</h3>
-                    <table class="metrics-table">
+            <!-- Analytics Layout -->
+            <div class="model-analytics-grid">
+                <!-- Mathematical Formula -->
+                <div class="analytics-card">
+                    <h3>📐 Algorithmic Formulation</h3>
+                    <p style="font-size: 0.9rem; line-height: 1.5; color: #cbd5e1;">
+                        The model utilizes the learned weights and intercept to map development indicators into a continuous decimal output representing the country's development level.
+                    </p>
+                    <div class="formula-box">
+HDI = 0.1453 + 0.0128*(EYS) + 0.0107*(MYS) + 0.0057*(Life_Exp) + 1.9e-6*(GNI) + 2.4e-5*(Country_Enc)
+                    </div>
+                    <div class="formula-legend">
+                        <div><strong>EYS</strong>: Expected Years Schooling</div>
+                        <div><strong>MYS</strong>: Mean Years Schooling</div>
+                        <div><strong>Life_Exp</strong>: Life Expectancy</div>
+                        <div><strong>GNI</strong>: GNI per Capita (PPP $)</div>
+                    </div>
+                </div>
+
+                <!-- Feature Coefficients -->
+                <div class="analytics-card">
+                    <h3>📊 Feature Impact Weights</h3>
+                    <p style="font-size: 0.9rem; line-height: 1.5; color: #cbd5e1; margin-bottom: 10px;">
+                        The magnitude of the coefficients indicates which developmental indicators have the greatest direct influence on the model's output.
+                    </p>
+                    <table class="coeff-table">
                         <thead>
                             <tr>
-                                <th>Metric</th>
-                                <th>Value</th>
-                                <th>Description</th>
+                                <th>Feature Indicator</th>
+                                <th>Weight</th>
+                                <th style="text-align: right;">Relative Impact</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>Model Algorithm</td>
-                                <td class="metric-value">Linear Regression</td>
-                                <td>Scikit-learn linear_model baseline</td>
+                                <td class="coeff-name">Expected Schooling (EYS)</td>
+                                <td class="coeff-val-num">+0.0128</td>
+                                <td class="coeff-bar-wrapper">
+                                    <div class="coeff-progress-bar">
+                                        <div class="coeff-progress-fill" style="width: 100%;"></div>
+                                    </div>
+                                </td>
                             </tr>
                             <tr>
-                                <td>R² Score (R-Squared)</td>
-                                <td class="metric-value">0.8834</td>
-                                <td>Explains 88.34% of the index score variance</td>
+                                <td class="coeff-name">Mean Schooling (MYS)</td>
+                                <td class="coeff-val-num">+0.0107</td>
+                                <td class="coeff-bar-wrapper">
+                                    <div class="coeff-progress-bar">
+                                        <div class="coeff-progress-fill" style="width: 83.6%;"></div>
+                                    </div>
+                                </td>
                             </tr>
                             <tr>
-                                <td>RMSE</td>
-                                <td class="metric-value">0.0361</td>
-                                <td>Root Mean Squared Error on test splits</td>
+                                <td class="coeff-name">Life Expectancy (LE)</td>
+                                <td class="coeff-val-num">+0.0057</td>
+                                <td class="coeff-bar-wrapper">
+                                    <div class="coeff-progress-bar">
+                                        <div class="coeff-progress-fill" style="width: 44.5%;"></div>
+                                    </div>
+                                </td>
                             </tr>
                             <tr>
-                                <td>Training Samples</td>
-                                <td class="metric-value">160</td>
-                                <td>80% of dataset records used for fitting</td>
-                            </tr>
-                            <tr>
-                                <td>Test Samples</td>
-                                <td class="metric-value">40</td>
-                                <td>20% of dataset records used for evaluation</td>
+                                <td class="coeff-name">GNI per Capita (GNI)</td>
+                                <td class="coeff-val-num">+1.9e-6</td>
+                                <td class="coeff-bar-wrapper">
+                                    <div class="coeff-progress-bar">
+                                        <div class="coeff-progress-fill" style="width: 1.5%;"></div>
+                                    </div>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
 
-                    <h3 style="margin-top: 30px;">📈 Feature Importance (Weights)</h3>
-                    <div class="coeff-bar-container">
-                        <div class="coeff-row">
-                            <div class="coeff-labels">
-                                <span>Expected Years of Schooling (EYS)</span>
-                                <span class="metric-value">+0.0128</span>
-                            </div>
-                            <div class="coeff-bar">
-                                <div class="coeff-fill" style="width: 100%;"></div>
-                            </div>
+            <!-- Visualization Plots Grid -->
+            <div class="plots-section">
+                <h3>📈 Exploratory Data Analysis & Visualizations</h3>
+                <div class="plots-grid">
+                    <!-- Plot 1 -->
+                    <div class="plot-item">
+                        <div class="plot-image-wrapper">
+                            <img class="plot-img" src="/static/images/correlation_heatmap.png" alt="Correlation Heatmap">
                         </div>
-                        <div class="coeff-row">
-                            <div class="coeff-labels">
-                                <span>Mean Years of Schooling (MYS)</span>
-                                <span class="metric-value">+0.0107</span>
-                            </div>
-                            <div class="coeff-bar">
-                                <div class="coeff-fill" style="width: 83.6%;"></div>
-                            </div>
-                        </div>
-                        <div class="coeff-row">
-                            <div class="coeff-labels">
-                                <span>Life Expectancy (years)</span>
-                                <span class="metric-value">+0.0057</span>
-                            </div>
-                            <div class="coeff-bar">
-                                <div class="coeff-fill" style="width: 44.5%;"></div>
-                            </div>
-                        </div>
-                        <div class="coeff-row">
-                            <div class="coeff-labels">
-                                <span>GNI per Capita (raw)</span>
-                                <span class="metric-value">+0.0000</span>
-                            </div>
-                            <div class="coeff-bar">
-                                <div class="coeff-fill" style="width: 1%;"></div>
-                            </div>
+                        <div class="plot-desc">
+                            <strong>Feature Correlation Matrix</strong>
+                            Correlation heatmap using Seaborn, revealing that education variables have the highest linear correlations with the target HDI Index.
                         </div>
                     </div>
-                </div>
-
-                <!-- Right Column -->
-                <div class="info-card">
-                    <h3>📷 Exploratory Data Analysis (EDA) Plots</h3>
-                    <div class="visualization-gallery">
-                        <div class="viz-container">
-                            <img class="viz-image" src="/static/images/correlation_heatmap.png" alt="Correlation Heatmap">
-                            <p><strong>Correlation Heatmap</strong>: Shows how indicators correlate with the HDI index. Schooling years show the strongest direct linear correlation.</p>
+                    <!-- Plot 2 -->
+                    <div class="plot-item">
+                        <div class="plot-image-wrapper">
+                            <img class="plot-img" src="/static/images/strip_mean_schooling_vs_hdi.png" alt="Schooling vs HDI Plot">
                         </div>
-                        <div class="viz-container">
-                            <img class="viz-image" src="/static/images/strip_mean_schooling_vs_hdi.png" alt="Schooling vs HDI Plot">
-                            <p><strong>Mean Schooling vs HDI Strip Plot</strong>: Visualizes HDI index distribution mapped to Mean Years of Schooling indicator values.</p>
+                        <div class="plot-desc">
+                            <strong>Schooling vs HDI Strip Plot</strong>
+                            Strip plot generated during exploratory data analysis (EDA), showing the relationship between mean years of adult schooling and target index scores.
                         </div>
-                        <div class="viz-container">
-                            <img class="viz-image" src="/static/images/strip_life_expectancy_vs_hdi.png" alt="Life Expectancy vs HDI Plot">
-                            <p><strong>Life Expectancy vs HDI Strip Plot</strong>: Displays how life expectancy aligns with the country development levels.</p>
+                    </div>
+                    <!-- Plot 3 -->
+                    <div class="plot-item">
+                        <div class="plot-image-wrapper">
+                            <img class="plot-img" src="/static/images/strip_life_expectancy_vs_hdi.png" alt="Life Expectancy vs HDI Plot">
+                        </div>
+                        <div class="plot-desc">
+                            <strong>Life Expectancy vs HDI Strip Plot</strong>
+                            Strip plot mapping the distribution of the life expectancy indicator relative to country index groups for the dataset.
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
 
         <footer class="footer">
             <p>HDI Prediction System — Built with Flask, Scikit-learn, and Machine Learning</p>
