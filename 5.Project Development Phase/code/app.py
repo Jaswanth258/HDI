@@ -150,5 +150,10 @@ def predict():
                            insights=insights, form_data=request.form)
 
 
+@app.route("/model-info")
+def model_info():
+    return render_template("model_info.html")
+
+
 if __name__ == "__main__":
     app.run(debug=True)
