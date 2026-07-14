@@ -93,7 +93,7 @@
             {% set tier_class = tier|lower|replace(' ', '-') %}
             <div class="result-card tier-{{ tier_class }}" id="result-card">
                 <p class="result-label">Predicted HDI Score</p>
-                <p class="result-score" style="color: {{ tier_color }};" id="score-display">{{ prediction }}</p>
+                <p class="result-score" data-color="{{ tier_color }}" id="score-display">{{ prediction }}</p>
 
                 <span class="tier-badge {{ tier_class }}">
                     {% if tier == 'Very High' %}🟢
@@ -107,7 +107,7 @@
                 <!-- HDI Gauge -->
                 <div class="gauge-container">
                     <div class="gauge-bar">
-                        <div class="gauge-marker" style="left: {{ (prediction * 100) | round(1) }}%;"></div>
+                        <div class="gauge-marker" id="gauge-marker" data-left="{{ (prediction * 100) | round(1) }}%"></div>
                     </div>
                     <div class="gauge-labels">
                         <span>0.0 Low</span>
@@ -129,7 +129,7 @@
                     <ul class="recommendations-list">
                         {% for rec in insights.recommendations %}
                         <li>
-                            <span class="check-icon" style="color: {{ tier_color }};">✦</span>
+                            <span class="check-icon" data-color="{{ tier_color }}">✦</span>
                             {{ rec }}
                         </li>
                         {% endfor %}
@@ -145,8 +145,17 @@
     </div>
 
     <script>
-        // Smooth scroll to result after prediction
+        // Smooth scroll and style application after DOM ready
         document.addEventListener('DOMContentLoaded', function() {
+            // Apply dynamic colors and positions to avoid IDE CSS parsing warnings
+            document.querySelectorAll('[data-color]').forEach(el => {
+                el.style.color = el.getAttribute('data-color');
+            });
+            const marker = document.getElementById('gauge-marker');
+            if (marker) {
+                marker.style.left = marker.getAttribute('data-left');
+            }
+
             const result = document.getElementById('result-card');
             if (result) {
                 setTimeout(() => {
