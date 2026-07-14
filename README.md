@@ -95,7 +95,7 @@ HDI/
 
 ### 1. Clone & Setup
 ```bash
-git clone https://github.com/Jaswanth258/HDI.git
+git clone https://github.com/Jaswanth258/A-COMPREHENSIVE-MEASURE-OF-WELL-BEING-HUMAN-DEVELOPMENT-INDEX-HDI-PREDICTOR.git
 cd "HDI/5.Project Development Phase/code"
 python -m venv venv
 .\venv\Scripts\Activate          # Windows PowerShell
